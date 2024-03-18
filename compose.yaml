@@ -3,49 +3,49 @@ services:
     build:
       context: ./src
       dockerfile: Dockerfile
-    command: ['0', '3', '6', '1', '4']
+    command: ['0', '4', '2', '1', '5', '3']
   node1:
     build:
       context: ./src
       dockerfile: Dockerfile
-    command: ['1', '2', '0']
+    command: ['1', '9', '0']
   node2:
     build:
       context: ./src
       dockerfile: Dockerfile
-    command: ['2', '9', '1']
+    command: ['2', '6', '0']
   node3:
     build:
       context: ./src
       dockerfile: Dockerfile
-    command: ['3', '0']
+    command: ['3', '7', '0']
   node4:
     build:
       context: ./src
       dockerfile: Dockerfile
-    command: ['4', '7', '5', '8', '0']
+    command: ['4', '0']
   node5:
     build:
       context: ./src
       dockerfile: Dockerfile
-    command: ['5', '4']
+    command: ['5', '0']
   node6:
     build:
       context: ./src
       dockerfile: Dockerfile
-    command: ['6', '0']
+    command: ['6', '8', '2']
   node7:
     build:
       context: ./src
       dockerfile: Dockerfile
-    command: ['7', '4']
+    command: ['7', '3']
   node8:
     build:
       context: ./src
       dockerfile: Dockerfile
-    command: ['8', '4']
+    command: ['8', '6']
   node9:
     build:
       context: ./src
       dockerfile: Dockerfile
-    command: ['9', '2']
+    command: ['9', '1']
