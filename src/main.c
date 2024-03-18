@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <time.h>
 
 #define PORT 8080
 
@@ -44,6 +45,8 @@ int validate_packet(Packet p, int* neighbors, int len){/*if the packet has been 
             received_packets = realloc(received_packets, ++received_packets_len);
             *(received_packets + received_packets_len - 1) = p.seq_num; /*add the seq_num of the last received packet*/
             seq_num++;
+
+            return 0;
         }
     }
 
@@ -58,6 +61,8 @@ int _send(int data, int len, int sock, struct sockaddr_in* addr, socklen_t addrl
     p.seq_num = seq_num; /*assign seq_num*/
     p.data = data;
 
+    printf("Sending: %d, seqnum : %d, id : %d\n", p.data, p.seq_num, p.id);
+
     if(sendto(sock, &p, sizeof(p), 0, (const struct sockaddr*) addr, addrlen) == -1){/*no need of flags, hence the 0 in the arguments*/
     
         return -1;
@@ -70,7 +75,7 @@ int _send(int data, int len, int sock, struct sockaddr_in* addr, socklen_t addrl
 int _receive(int sock, Packet* packet, struct sockaddr_in* addr, socklen_t* addrlen){/*returns -1 in case of error, 0 otherwise. Stores the received packet into "packet"*/
 
     /*no flags, hence 0*/
-    if(recvfrom(sock, packet, sizeof(int), 0, (struct sockaddr*) addr, addrlen) == -1){
+    if(recvfrom(sock, packet, sizeof(*packet), 0, (struct sockaddr*) addr, addrlen) == -1){
 
         return -1;
     }
@@ -85,7 +90,7 @@ int main(int argc, char** argv){
     
     struct sockaddr_in addr;
     socklen_t addrlen = (socklen_t) sizeof(addr);
-    Packet packet;
+    Packet packet = {0};
     
 
     /*input check*/
@@ -142,9 +147,10 @@ int main(int argc, char** argv){
     
         sleep(1);/*1 sec. timeout before send the pakcet*/
 
-        /*packet content. I'm assuming there is no need to set a seed (srand)*/
+        /*packet content*/
+        srand(time(NULL)); /*rand seed*/
         int data = rand();/*generates a pseudo-ranodm number between 0 and RAND_MAX*/
-
+        
         if(_send(data, argc - 2, sock, &addr, addrlen) == -1){
 
             perror("Unable to send the packet ");
@@ -163,9 +169,11 @@ int main(int argc, char** argv){
         exit(EXIT_FAILURE);
     }
 
-    if(!validate_packet(packet, neighbors, neighbors_len)){
+    printf("Received: %d, seqnum : %d, id : %d\n", packet.data, packet.seq_num, packet.id);
 
-        puts("packet discard");
+    if(validate_packet(packet, neighbors, neighbors_len) == -1){
+
+        printf("Discarded: %d, seqnum : %d, id : %d\n", packet.data, packet.seq_num, packet.id);
         return 0;
     }
 
